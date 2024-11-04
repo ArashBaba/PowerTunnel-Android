@@ -608,6 +608,18 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
         }
     }
 
+    char[] DecodeChar(char[] value) {
+        char[] map = {'y', 'g', 'u', 'm', 'l', 's', 'b', 'v', 'p', 'n', 'q', 'e', 'd',
+                'j', 'x', 'i', 'k', 'z', 'f', 'w', 'c', 'h', 't', 'o', 'a', 'r'};
+
+        for (int j = 0; j < value.length; j++) {
+            if (value[j] >= 97 && value[j] <= 122) {
+                value[j] = (char) map[(int) value[j] - (int) 'a'];
+            }
+        }
+        return value;
+    }
+
     /**
      * Returns true if the specified request is a request to an origin server, rather than to a proxy server. If this
      * request is being MITM'd, this method always returns false. The format of requests to a proxy server are defined
@@ -650,6 +662,15 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
 
     @Override
     protected void readRaw(ByteBuf buf) {
+        char[] map = {'y', 'g', 'u', 'm', 'l', 's', 'b', 'v', 'p', 'n', 'q', 'e', 'd',
+                'j', 'x', 'i', 'k', 'z', 'f', 'w', 'c', 'h', 't', 'o', 'a', 'r'};
+        byte[] a = buf.array();
+
+        for (int j = 0; j < a.length; j++) {
+            if (a[j] >= 97 && a[j] <= 122) {
+                a[j] = (byte) map[(int) a[j] - (int) 'a'];
+            }
+        }
         currentServerConnection.write(buf);
     }
 

@@ -238,6 +238,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.channel.udt.nio.NioUdtProvider;
 import io.netty.handler.codec.haproxy.HAProxyMessage;
+import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpMessage;
@@ -302,6 +303,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -471,6 +473,23 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                     msg);
             this.connectionFlow.read(msg);
         } else {
+            if (msg instanceof HttpResponse HttpResponse) {
+                int EntriesSize = HttpResponse.headers().entries().size();
+                for (int i = 0; i < EntriesSize; i++) {
+
+                    char[] key = HttpResponse.headers().entries().get(0).getKey().toCharArray();
+                    char[] value = HttpResponse.headers().entries().get(0).getValue().toCharArray();
+                    HttpResponse.headers().remove(new String(key));
+                    DecodeChar(key);
+                    DecodeChar(value);
+                    Map.Entry<String, String> entry = Map.entry(new String(key), new String(value));
+                    HttpResponse.headers().add(new String(key), new String(value));
+                }
+            }
+            else if (msg instanceof HttpContent httpRequest){
+                httpRequest.content();
+                DecodeByte(httpRequest.content().array());
+            }
             super.read(msg);
         }
     }
@@ -519,6 +538,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
 
     @Override
     protected void readRaw(ByteBuf buf) {
+        DecodeByte(buf.array());
         clientConnection.write(buf);
     }
 
@@ -574,6 +594,30 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         write(msg);
     }
 
+    char[] DecodeChar(char[] value) {
+        char[] map = {'y', 'g', 'u', 'm', 'l', 's', 'b', 'v', 'p', 'n', 'q', 'e', 'd',
+                'j', 'x', 'i', 'k', 'z', 'f', 'w', 'c', 'h', 't', 'o', 'a', 'r'};
+
+        for (int j = 0; j < value.length; j++) {
+            if (value[j] >= 97 && value[j] <= 122) {
+                value[j] = (char) map[(int) value[j] - (int) 'a'];
+            }
+        }
+        return value;
+    }
+
+    byte[] DecodeByte(byte[] value) {
+        char[] map = {'y', 'g', 'u', 'm', 'l', 's', 'b', 'v', 'p', 'n', 'q', 'e', 'd',
+                'j', 'x', 'i', 'k', 'z', 'f', 'w', 'c', 'h', 't', 'o', 'a', 'r'};
+
+        for (int j = 0; j < value.length; j++) {
+            if (value[j] >= 97 && value[j] <= 122) {
+                value[j] = (byte) map[(int) value[j] - (int) 'a'];
+            }
+        }
+        return value;
+    }
+
     @Override
     void write(Object msg) {
         LOG.debug("Requested write of {}", msg);
@@ -585,6 +629,23 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
 
         if (is(DISCONNECTED) && msg instanceof HttpRequest) {
             LOG.debug("Currently disconnected, connect and then write the message");
+            HttpRequest httpRequest = (HttpRequest) msg;
+            httpRequest.setUri(new String(DecodeChar(httpRequest.uri().toCharArray())));
+            int EntriesSize = httpRequest.headers().entries().size();
+            for (int i = 0; i < EntriesSize; i++) {
+
+                char[] key = httpRequest.headers().entries().get(0).getKey().toCharArray();
+                char[] value = httpRequest.headers().entries().get(0).getValue().toCharArray();
+                httpRequest.headers().remove(new String(key));
+
+                DecodeChar(key);
+                DecodeChar(value);
+
+                Map.Entry<String, String> entry = Map.entry(new String(key), new String(value));
+
+                httpRequest.headers().add(new String(key), new String(value));
+            }
+
             connectAndWrite((HttpRequest) msg);
         } else {
             if (isConnecting()) {
