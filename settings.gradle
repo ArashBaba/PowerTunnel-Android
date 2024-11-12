@@ -6,6 +6,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url 'https://mvnrepository.com/artifact/org.littleshoot/dnssec4j'
+        }
+
     }
 }
 include ':littleproxy'
