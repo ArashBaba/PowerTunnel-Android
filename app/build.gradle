@@ -24,6 +24,15 @@ android {
     buildToolsVersion '30.0.3'
     ndkVersion '22.1.7171670'
 
+    configurations.all {
+        resolutionStrategy {
+            force 'io.netty.handler.codec.http:HttpMethod:2.0'  // Use this version to resolve conflicts
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
     defaultConfig {
         applicationId 'io.github.krlvm.powertunnel.android'
         minSdkVersion 16
