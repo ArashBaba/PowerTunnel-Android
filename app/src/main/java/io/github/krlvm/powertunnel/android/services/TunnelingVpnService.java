@@ -243,7 +243,7 @@ public class TunnelingVpnService extends VpnService {
         builder.setSession(getString(R.string.app_name));
         builder.setConfigureIntent(PendingIntent.getActivity(
                 this, 0,
-                new Intent(this, MainActivity.class), 0
+                new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE
         ));
 
         /* NATIVE VPN CONFIGURATION */

@@ -62,13 +62,13 @@ public class NotificationHelper {
                         PendingIntent.getBroadcast(
                                 context, 0,
                                 new Intent(context, ActionReceiver.class).setAction(PowerTunnelService.ACTION_STOP),
-                                0
+                                PendingIntent.FLAG_IMMUTABLE
                         )
                 )
 
                 .setContentIntent(PendingIntent.getActivity(
                         context, 0,
-                        new Intent(context, MainActivity.class), 0)
+                        new Intent(context, MainActivity.class), PendingIntent.FLAG_IMMUTABLE)
                 )
                 .build();
     }

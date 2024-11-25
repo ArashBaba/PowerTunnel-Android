@@ -8,6 +8,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-include ':littleproxy'
-include ':core'
-include ':sdk'
+include 'sdk'
+include 'littleproxy', 'core'

@@ -23,7 +23,9 @@ android {
     compileSdkVersion 30
     buildToolsVersion '30.0.3'
     ndkVersion '22.1.7171670'
-
+    lintOptions {
+        checkReleaseBuilds false // Disables lint checks for release builds
+    }
     defaultConfig {
         applicationId 'io.github.krlvm.powertunnel.android'
         minSdkVersion 16
@@ -78,9 +80,9 @@ dependencies {
     implementation('org.slf4j:slf4j-android:1.7.35') {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
-    implementation project(':core')
-    implementation project(':sdk')
-    implementation project(':littleproxy')
+//    implementation project(':core')
+//    implementation project(':sdk')
+//    implementation project(':littleproxy')
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'

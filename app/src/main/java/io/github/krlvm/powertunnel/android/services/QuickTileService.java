@@ -164,7 +164,7 @@ public class QuickTileService extends TileService {
                     .setContentIntent(PendingIntent.getActivity(this, 0, Updater.getDownloadIntent(info), 0))
                     .addAction(
                             R.drawable.ic_download, getString(R.string.download),
-                            PendingIntent.getActivity(this, 0, Updater.getDownloadIntent(info), 0)
+                            PendingIntent.getActivity(this, 0, Updater.getDownloadIntent(info), PendingIntent.FLAG_IMMUTABLE)
                     )
                     .setAutoCancel(true)
                     .build()
